@@ -10,5 +10,7 @@ comment trouver le flag:
     - cdiiddwpgswtgt
 6) le code trouver ne fonctionne pas comme mot de pass a la session flag00
 7) si on fait un dechiffrage cesar avec un decalage de 15 on trouve
+
     - nottoohardhere
+    
 8) deja envie de crever mais au moins ca marche on peut ce connecter a flag00

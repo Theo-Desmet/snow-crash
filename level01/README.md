@@ -1,7 +1,10 @@
-1) cette foit find/ -user flag01 ne donne rien. tout les sous dossier sont en acces denied. il n'y a pas juste le mdp en clair
+# Level 01
 
-2) en cherchanty sur google les info general des user son souvent stocker dan /etc. et bingo il exite un fichier "/etc/passwd" avec un hash du mdp de visible
+1) cette fois `find/ -user flag01 2>/dev/null` ne donne rien. Tout les sous-dossiers sont en acces denied. Il n'y a pas juste le mdp en clair.
 
+2) en cherchant sur google les infos generales des user sont souvent stockees dans `/etc`. Justement il exite un fichier `/etc/passwd` avec un hash du mdp visible
+
+```
 level00:x:2000:2000::/home/user/level00:/bin/bash
 level01:x:2001:2001::/home/user/level01:/bin/bash
 level02:x:2002:2002::/home/user/level02:/bin/bash
@@ -32,18 +35,13 @@ flag11:x:3011:3011::/home/flag/flag11:/bin/bash
 flag12:x:3012:3012::/home/flag/flag12:/bin/bash
 flag13:x:3013:3013::/home/flag/flag13:/bin/bash
 flag14:x:3014:3014::/home/flag/flag14:/bin/bash
+```
 
+3) le mdp est visible mais hashe. Tout les outils de crack en ligne ont echoue a le lire. En cherchant sur chat gpt c'est un `DES`. un vieux format de linux. 
 
-3) le mdp et visible et visible mais hash. tout les outil de crack en ligne echoue a le lire, en cherchant sur chat gpt c'est un "DES". un vieux format tout peter de linux. 
+6) J'ai donc utilise la commande `john` depuis un autre pc pour trouver le hash du mot de passe :
 
-4) FLLLLEEEEEEEMMMMMMMMMMMMMMMMMEEEEEE je doit reinstaller une vm ubuntu juste pour utiliser un vieux logiciel peter, john (john the ripper) juste pour lire ce hash
-
-5) virtual box c'est de la merdeeeeeeeeeeeee, 2h pour installer un ubuntu avec 8 coeur et 8 go de ram, quelle merde.
-
-6) arreter de pleurer sur ce projet et rentrer la commande :
-    - echo "42hDRfypTqqnw" > hash.txt && john hash.txt --show
-resulat : abcdefg
-
-J'ai envie de crever........ tous ca pour ca
-
-7) connection a flag01 et recuperation du flag
+```bash
+echo "42hDRfypTqqnw" > hash.txt && john hash.txt --show
+abcdefg
+```

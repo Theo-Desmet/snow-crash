@@ -1,9 +1,23 @@
-1) bon le debut et facile, un simple ls permet de voir qu'il y a un fichier level02.pcap
+# Level 02
 
-2) les fichier .pcap ce sont des enregistrement de flux reseau. l'outil le plus pratique sous linux pour le lire (merci la vm) c'est wireshark car il est graphique
+1) Ici, un simple `ls` permet de voir qu'il y a un fichier `level02.pcap`
 
-3) quand on retrace toute la convercation byte par byte du flux tcp on obtien ca :
+```bash
+ls -la
+total 24
+dr-x------ 1 level02 level02  120 Mar  5  2016 .
+d--x--x--x 1 root    users    340 Aug 30  2015 ..
+-r-x------ 1 level02 level02  220 Apr  3  2012 .bash_logout
+-r-x------ 1 level02 level02 3518 Aug 30  2015 .bashrc
+----r--r-- 1 flag02  level02 8302 Aug 30  2015 level02.pcap
+-r-x------ 1 level02 level02  675 Apr  3  2012 .profile
+```
 
+2) Les fichier `.pcap` sont des enregistrements de flux reseau. L'outil le plus pratique sous linux pour le lire est `wireshark`.
+
+3) quand on retrace toute la conversation byte par byte du flux tcp on obtient ceci :
+
+```
 ..%
 ..%
 ..&..... ..#..'..$
@@ -44,10 +58,11 @@ ft_wandr...NDRel.L0L
 ..
 Login incorrect
 wwwbugs login: 
+```
 
+4) on peut voir le mdp en clair mais les si on regarde dans `wireshark`, les bytes de "." correspondent en realite a des whitespaces. Directement dans `wireshark` on peut changer la table ascii par les codes en C et ca donne ceci :
 
-4) on peut voir le mdp en clair mais les si on regarde dans wireshark, les bytes de "." corresponde en realiter a des white space. directement dans wireshark on peut changer la table ascii par les code en C et ca donne ca :
-
+```C
 char peer0_13[] = { /* Packet 45 */
 0x66 };
 char peer0_14[] = { /* Packet 47 */
@@ -90,9 +105,8 @@ char peer0_32[] = { /* Packet 83 */
 0x4c };
 char peer0_33[] = { /* Packet 85 */
 0x0d };
+```
 
-6) on a le meme mdp en format 0xXX, et on peut voir que chaque byte de "." (0x7f) correspond en realiter a "del" en ascii. l'utilisateur a donc fait des retour arriere dans sont mots de passe, on passe donc de :
+6) On a le meme mdp en format hexadecimal, et on peut voir que chaque `.` correspond en realite a `del` en ascii. L'utilisateur a donc fait des retours arriere dans sont mot de passe, on passe donc de :
     - ft_wandr...NDRel.L0L
     - ft_waNDReL0L
-
-7) plus qu'as ce connecter a la session flag02

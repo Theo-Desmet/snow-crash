@@ -23,21 +23,23 @@ done
 
 3) ok donc ce que fait le script c'est qu'il accorde un temps cpu de 5s a un process, il execute un fichier puis le supprime. il suffit de lui faire executer `getflag` et c'est gagne
 
-4) probleme on peut ecrire directement dans le dossier /opt/openarenaserver/ mais le script va lire le fichier puis le supprimer donc retour a la case depart pour trouver un moyen d'ecrire dans ce dossier sans suppresion
+4) probleme on peut ecrire directement dans le dossier `/opt/openarenaserver/` mais le script va lire le fichier puis le supprimer donc retour a la case depart pour trouver un moyen d'ecrire dans ce dossier sans suppresion
 
-5) apres 1HHHHHH de recherche sans serrer du point y a ca qui trouve peut etre une solution: 
+5) apres quelques recherches j'ai trouve ceci:
 
-    - find / -name level05
+```bash
+find / -name level05
+/var/mail/level05
+/rofs/var/mail/level05
+```
 
-ca trouve 2 fichier : 
+les deux fichiers contiennent la meme chose:
 
-    - /var/mail/level05
-    - /rofs/var/mail/level05
+```bash
+*/2 * * * * su -c "sh /usr/sbin/openarenaserver" - flag05
+```
 
-les deux fichier contien la meme chose:
-    - */2 * * * * su -c "sh /usr/sbin/openarenaserver" - flag05
-
-6) apres un petit coup de cht gpt pour savoir ce que ca peut bien etre il s'agit en faite tout betement d'un cron qui tourne en boucle et qui toute les deux minute. 
+6) apres un petit coup de chat gpt pour savoir ce que ca peut bien etre il s'agit en faite tout betement d'un cron qui tourne en boucle et qui toute les deux minute. 
 
 7) pour choper le flag il faut faire en sorte d'utiliser le cron pour qu'il execute script avec un call a getflag, sachant que le script suprime sont fichier a la fin de c'es 5s. la solution ca serai d'avoir un doublon qui serait executer avec le premier mais pas supprimer
 

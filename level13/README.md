@@ -1,17 +1,17 @@
 #level13
 
-1) avec un simple ls on trouve un fichier binaire nommer level13, quand on l'execute il affiche ceci:
+1) avec un simple `ls` on trouve un fichier binaire nomme `level13`. Quand on l'execute il affiche ceci:
 
-```
+```bash
 level13@SnowCrash:~$ ./level13 
 UID 2013 started us but we we expect 4242
 ```
 
 le programme ne prend pas d'argument ni d'input
 
-2) ca parait assez clair, nous ne somme pas le bon user id. pas de probleme il suffit de lui faire croire que nous somme 4242. on peut desasembler le binaire ce qui donne ca : 
+2) Ca parait assez clair, nous ne somme pas le bon user id. Pas de probleme il suffit de lui faire croire que nous somme `4242`. On peut desasembler le binaire ce qui donne ca : 
 
-```
+```asm
    0x0804858c <+0>:	push   %ebp
    0x0804858d <+1>:	mov    %esp,%ebp
    0x0804858f <+3>:	and    $0xfffffff0,%esp
@@ -37,9 +37,9 @@ le programme ne prend pas d'argument ni d'input
    0x080485e9 <+93>:	ret    
 ```
 
-3) le programme appel `getuid` et le compare a 4242, si c'est bon on jump en +63 et il donne le flag sinon il affiche un message d'erreur. il suffit donc de remplacer le retour de `getuid` avant la caomparaison. il suffit de faire le code suivant : 
+3) le programme appel `getuid` et le compare a `4242`, si c'est bon on jump en +63 et il donne le flag sinon il affiche un message d'erreur. Il suffit donc de remplacer le retour de `getuid` avant la comparaison. Il suffit de faire le code suivant : 
 
-```
+```bash
 (gdb) b *main+14
 Breakpoint 1 at 0x804859a
 (gdb) r
@@ -68,5 +68,4 @@ gs             0x33	51
 Continuing.
 your token is 2A31L79asukciNyi8uppkEuSx
 [Inferior 1 (process 2043) exited with code 050]
-
 ```
